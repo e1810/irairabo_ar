@@ -818,7 +818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6cbb5fd67caebd45993dc7e5f7c1dd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockPrefab: {fileID: 4390562343949992858, guid: 47bc68711ce323348a4b0a27fa72b86b,
+  blockPrefab: {fileID: 6459754471726096661, guid: 47bc68711ce323348a4b0a27fa72b86b,
     type: 3}
   goalPrefab: {fileID: 8377218181857385236, guid: 7f915b2e90f0c654c9a8e4f9d0616b24,
     type: 3}
@@ -1016,7 +1016,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.35
+  m_Radius: 0.37
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1363881344
 MeshRenderer:
@@ -1094,7 +1094,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!21 &1380841487
 Material:
   serializedVersion: 6

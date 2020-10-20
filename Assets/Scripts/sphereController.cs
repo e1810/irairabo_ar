@@ -13,30 +13,7 @@ public class sphereController : MonoBehaviour
     int hitCount = 0, timeCount = 0;
     bool isMovable = true, isStarted;
     UnityEngine.UI.Text msgtxt;
-
-    void OnTriggerStay(Collider collider)
-    {
-        if (collider.gameObject.tag == "MazeWall")
-        {
-            UnityEngine.Debug.Log("Hit!");
-            if(isStarted && isMovable && hitCount<2e7) hitCount++;
-        }
-        else if(isStarted)
-        {
-            UnityEngine.Debug.Log("Goal!");
-            isMovable = false;
-            int score = (int)2e7 / (timeCount / 5 + hitCount);
-            string s = "GOAL !!!\nScore: " + score.ToString();
-            textBox.SetActive(true);
-            msgtxt.text = s;
-            retryButton.SetActive(true);
-        }
-    }
-
-    public void Retry()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
+    Renderer renderer;
 
 
     void Start()
@@ -44,7 +21,7 @@ public class sphereController : MonoBehaviour
         retryButton.SetActive(false);
         msgtxt = canvas.GetComponent<UnityEngine.UI.Text>();
         msgtxt.text = "keep the ball\nout of the maze";
-        //msgtxt.color = new Color(1f, 0f, 0f, 1f);
+        renderer = GetComponent<Renderer>();
     }
 
     void Update()
@@ -52,6 +29,8 @@ public class sphereController : MonoBehaviour
         float x = marker.transform.position.x;
         float y = marker.transform.position.y;
         float z = marker.transform.position.z;
+        float nowX = transform.position.x;
+        float nowY = transform.position.y;
         float newX = x + x / (-20 - z) * z;
         float newY = y + y / (-20 - z) * z;
 
@@ -78,6 +57,50 @@ public class sphereController : MonoBehaviour
             }
             if (isMovable && timeCount < 2e7) timeCount++;
         }
-        if(isMovable) transform.position = new Vector3(newX, newY, 0);
+        if(!isStarted &&isMovable) transform.position = new Vector3(newX, newY, 0);
+        //if(isStarted && isMovable) GetComponent<Rigidbody>().MovePosition(new Vector3(newX, newY, 0f));
+        if (isStarted && isMovable) GetComponent<Rigidbody>().velocity = new Vector3(newX - nowX, newY - nowY, 0f) * 12;
     }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Renderer wallRenderer = collision.gameObject.GetComponent<Renderer>();
+        if(isStarted && isMovable) wallRenderer.material.color = new Color(255, 0, 0);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.tag == "MazeWall")
+        {
+            UnityEngine.Debug.Log("Hit!");
+            if (isStarted && isMovable && hitCount < 2e7)
+            {
+                hitCount++;
+                renderer.material.color = new Color(0, 0, hitCount / 30);
+            }
+        }
+        else if (isStarted)
+        {
+            UnityEngine.Debug.Log("Goal!");
+            isMovable = false;
+            int score = (int)2e7 / (timeCount / 5 + hitCount);
+            string s = "GOAL !!!\nScore: " + score.ToString();
+            textBox.SetActive(true);
+            msgtxt.text = s;
+            retryButton.SetActive(true);
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        Renderer wallRenderer = collision.gameObject.GetComponent<Renderer>();
+        if(isStarted && isMovable) wallRenderer.material.color = new Color(255, 255, 255);
+    }
+
+    public void Retry()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+
 }
